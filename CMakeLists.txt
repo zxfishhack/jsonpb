@@ -5,19 +5,19 @@ include(cmake/debug_func.cmake)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(protobuf_BUILD_TESTS OFF)
 FetchContent_Declare(
   protobuf
   URL https://assets.grgreye.com/libs/protobuf-3.19.2.zip
 )
 FetchContent_MakeAvailable(protobuf)
-set(protobuf_BUILD_TESTS OFF)
 add_subdirectory(${protobuf_SOURCE_DIR}/cmake)
 include_directories(${protobuf_SOURCE_DIR}/src)
 
 include_directories(${PROJECT_SOURCE_DIR}/proto)
 file(GLOB_RECURSE all_tests_files FOLLOW_SYMLINKS tests/*.cpp)
 file(GLOB_RECURSE all_benches_files FOLLOW_SYMLINKS bench/*.cpp)
-file(GLOB_RECURSE all_proto_files FOLLOW_SYMLINKS proto/*.cpp)
+file(GLOB_RECURSE all_proto_files FOLLOW_SYMLINKS proto/*.cc)
 
 FetchContent_Declare(
   gtest
