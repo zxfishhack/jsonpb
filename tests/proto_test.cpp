@@ -29,7 +29,7 @@ void printTime(std::ostream& out, const char* prefix, const std::chrono::duratio
 class GenerateFile : public testing::Environment {
   void SetUp() override {
     using namespace std::literals;
-    std::ofstream of("../test.json");
+    std::ofstream of("test.json");
     A a;
     char buf[1024];
     for(auto i=0; i<1000*1000; i++) {
@@ -69,7 +69,7 @@ const auto env = testing::AddGlobalTestEnvironment(new GenerateFile);
 
 TEST(JSONPB, ProtobufJSON) {
   A a;
-  std::ifstream input("../test.json");
+  std::ifstream input("test.json");
   input.seekg(0, std::ios_base::end);
   auto length = input.tellg();
   input.seekg(0, std::ios_base::beg);
@@ -84,7 +84,7 @@ TEST(JSONPB, ProtobufJSON) {
 
 TEST(JSONPB, RapidJSON) {
   A a;
-  std::ifstream input("../test.json");
+  std::ifstream input("test.json");
   input.seekg(0, std::ios_base::end);
   auto length = input.tellg();
   input.seekg(0, std::ios_base::beg);
