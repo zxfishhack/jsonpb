@@ -6,6 +6,13 @@ include(cmake/debug_func.cmake)
 set(CMAKE_CXX_STANDARD 14)
 
 FetchContent_Declare(
+  humanize
+  URL https://ghproxy.com/https://github.com/zxfishhack/humanize/archive/refs/heads/main.zip
+)
+FetchContent_MakeAvailable(humanize)
+include_directories(${humanize_SOURCE_DIR}/include)
+
+FetchContent_Declare(
   protobuf
   URL https://assets.grgreye.com/libs/protobuf-3.19.2.zip
 )

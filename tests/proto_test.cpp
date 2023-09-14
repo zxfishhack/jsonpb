@@ -4,27 +4,11 @@
 
 #include "pb.pb.h"
 #include <google/protobuf/util/json_util.h>
-#include <fstream>
 #include <iostream>
 #include <chrono>
-#include <iomanip>
 #include <gtest/gtest.h>
 #include <rapidjson/document.h>
-
-template <class _Rep, class _Period>
-void printTime(std::ostream& out, const char* prefix, const std::chrono::duration<_Rep, _Period>& d) {
-  using namespace std::literals;
-  out << prefix << std::setprecision(3);
-  if (d / 1s > 0 || d * 10 / 1s > 0) {
-    out << d * 1.0 / 1s << "s.";
-  } else if (d / 1ms > 0 || d * 10 / 1ms > 0) {
-    out << d * 1.0 / 1ms << "ms.";
-  } else {
-    out << std::chrono::duration_cast<std::chrono::microseconds>(d).count() << "µs.";
-  }
-
-  out << std::endl;
-}
+#include <humanize.h>
 
 class GenerateFile : public testing::Environment {
   void SetUp() override {
@@ -57,8 +41,8 @@ class GenerateFile : public testing::Environment {
     of.write(json.c_str(), json.length());
     of.close();
     std::cout << "generate test file done" << std::endl;
-    std::cout << "JSON file size: " << json.length() << "B ≈ " << json.length() / 1024 / 1024 << "MB" << std::endl;
-    printTime(std::cout, "marshal protobuf to JSON cost ", end - start);
+    std::cout << "JSON file size: " << humanize::bytes(size_t(json.length())) << std::endl;
+    std::cout << "marshal protobuf to JSON cost " << humanize::duration(end - start) << std::endl;
   }
   void TearDown() override {
     std::remove("test.json");
@@ -79,7 +63,7 @@ TEST(JSONPB, ProtobufJSON) {
   auto st = google::protobuf::util::JsonStringToMessage(std::string(buf, length), &a);
   auto end = std::chrono::high_resolution_clock::now();
   EXPECT_TRUE(st.ok()) << st.ToString();
-  printTime(std::cout, "parse JSON to protobuf cost ", end - start);
+  std::cout << "parse JSON to protobuf cost " << humanize::duration(end - start) << std::endl;
 }
 
 void getData(google::protobuf::RepeatedPtrField<Status>* dst, rapidjson::Document& doc, const char *src) {
@@ -115,6 +99,6 @@ TEST(JSONPB, RapidJSON) {
   getData(a.mutable_d(), doc, "D");
   getData(a.mutable_e(), doc, "E");
   auto end = std::chrono::high_resolution_clock::now();
-  printTime(std::cout, "parse JSON cost ", mid - start);
-  printTime(std::cout, "parse JSON to protobuf cost ", end - start);
+  std::cout << "parse JSON cost " << humanize::duration(mid - start) << std::endl;
+  std::cout << "parse JSON to protobuf cost " << humanize::duration(end - start) << std::endl;
 }
