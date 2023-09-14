@@ -15,9 +15,9 @@ template <class _Rep, class _Period>
 void printTime(std::ostream& out, const char* prefix, const std::chrono::duration<_Rep, _Period>& d) {
   using namespace std::literals;
   out << prefix << std::setprecision(3);
-  if (d / 1s > 0) {
+  if (d / 1s > 0 || d * 10 / 1s > 0) {
     out << d * 1.0 / 1s << "s.";
-  } else if (d / 1ms > 0) {
+  } else if (d / 1ms > 0 || d * 10 / 1ms > 0) {
     out << d * 1.0 / 1ms << "ms.";
   } else {
     out << std::chrono::duration_cast<std::chrono::microseconds>(d).count() << "µs.";
