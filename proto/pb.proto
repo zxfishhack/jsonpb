@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+message Status {
+    string Path = 1;
+    string CreateTime = 2;
+}
+
+message A {
+    repeated Status B = 1;
+    repeated Status C = 2;
+    repeated Status D = 3;
+    repeated Status E = 4;
+}
