@@ -58,10 +58,10 @@ class GenerateFile : public testing::Environment {
     of.close();
     std::cout << "generate test file done" << std::endl;
     std::cout << "JSON file size: " << json.length() << "B ≈ " << json.length() / 1024 / 1024 << "MB" << std::endl;
-    std::cout << "marshal protobuf to JSON cost "
-              << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << "µs ≈ "
-              << (end - start) / 1ms << "ms ≈ "
-              << (end - start) / 1s << "s." << std::endl;
+    printTime(std::cout, "marshal protobuf to JSON cost ", end - start);
+  }
+  void TearDown() override {
+    std::remove("test.json");
   }
 };
 
