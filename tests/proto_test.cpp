@@ -76,9 +76,9 @@ TEST(JSONPB, ProtobufJSON) {
   auto buf = new char[length];
   input.read(buf, length);
   auto start = std::chrono::high_resolution_clock::now();
-  auto st = google::protobuf::util::JsonStringToMessage(buf, &a);
+  auto st = google::protobuf::util::JsonStringToMessage(std::string(buf, length), &a);
   auto end = std::chrono::high_resolution_clock::now();
-  EXPECT_TRUE(st.ok());
+  EXPECT_TRUE(st.ok()) << st.ToString();
   printTime(std::cout, "parse JSON to protobuf cost ", end - start);
 }
 
