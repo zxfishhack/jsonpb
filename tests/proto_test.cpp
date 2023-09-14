@@ -82,6 +82,22 @@ TEST(JSONPB, ProtobufJSON) {
   printTime(std::cout, "parse JSON to protobuf cost ", end - start);
 }
 
+void getData(google::protobuf::RepeatedPtrField<Status>* dst, rapidjson::Document& doc, const char *src) {
+  if (doc.HasMember(src) && doc[src].IsArray()) {
+    for (auto sp = doc[src].Begin(); sp != doc[src].End(); sp++) {
+      Status status;
+      auto& s = *sp;
+      if (s.HasMember("CreateTime") && s["CreateTime"].IsString()) {
+        status.set_createtime(s["CreateTime"].GetString());
+      }
+      if (s.HasMember("Path") && s["Path"].IsString()) {
+        status.set_path(s["Path"].GetString());
+      }
+      dst->Add(std::move(status));
+    }
+  }
+}
+
 TEST(JSONPB, RapidJSON) {
   A a;
   std::ifstream input("test.json");
@@ -94,30 +110,10 @@ TEST(JSONPB, RapidJSON) {
   rapidjson::Document doc;
   EXPECT_FALSE(doc.Parse(buf, length).HasParseError());
   auto mid = std::chrono::high_resolution_clock::now();
-  for(auto s = doc["B"].Begin(); s != doc["B"].End(); s++) {
-    Status status;
-    status.set_createtime((*s)["CreateTime"].GetString());
-    status.set_path((*s)["Path"].GetString());
-    a.mutable_b()->Add(std::move(status));
-  }
-  for(auto s = doc["C"].Begin(); s != doc["C"].End(); s++) {
-    Status status;
-    status.set_createtime((*s)["CreateTime"].GetString());
-    status.set_path((*s)["Path"].GetString());
-    a.mutable_c()->Add(std::move(status));
-  }
-  for(auto s = doc["D"].Begin(); s != doc["D"].End(); s++) {
-    Status status;
-    status.set_createtime((*s)["CreateTime"].GetString());
-    status.set_path((*s)["Path"].GetString());
-    a.mutable_d()->Add(std::move(status));
-  }
-  for(auto s = doc["E"].Begin(); s != doc["E"].End(); s++) {
-    Status status;
-    status.set_createtime((*s)["CreateTime"].GetString());
-    status.set_path((*s)["Path"].GetString());
-    a.mutable_e()->Add(std::move(status));
-  }
+  getData(a.mutable_b(), doc, "B");
+  getData(a.mutable_c(), doc, "C");
+  getData(a.mutable_d(), doc, "D");
+  getData(a.mutable_e(), doc, "E");
   auto end = std::chrono::high_resolution_clock::now();
   printTime(std::cout, "parse JSON cost ", mid - start);
   printTime(std::cout, "parse JSON to protobuf cost ", end - start);
